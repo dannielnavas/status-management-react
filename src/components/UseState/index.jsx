@@ -7,12 +7,13 @@ const UseState = ({ name }) => {
 
   useEffect(() => {
     if (loading) {
+      // si loading es true entonces se ejecuta el setTimeout
       setTimeout(() => {
         setError(true);
         setLoading(false);
       }, 2000);
     }
-  }, [loading]);
+  }, [loading]); // valida cada vez que cambia loading
 
   return (
     <div>
