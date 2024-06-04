@@ -12,6 +12,8 @@ const UseState = ({ name }) => {
     value: "",
     error: false,
     loading: false,
+    deleted: false,
+    confirmed: false,
   });
   useEffect(() => {
     if (state.loading) {
@@ -32,26 +34,54 @@ const UseState = ({ name }) => {
           ...state,
           loading: false,
           error: false,
+          confirmed: true,
         });
         // setError(false);
       }, 2000);
     }
   }, [state, state.loading]); // valida cada vez que cambia loading
 
+  if (!state.confirmed && !state.deleted) {
+    return (
+      <div>
+        <h1>Eliminar {name}</h1>
+        <p>Por favor escribe el código de seguridad</p>
+        {state.error && !state.loading && <p> Error el código es incorrecto.</p>}
+        {state.loading && <p>Cargando...</p>}
+        <input
+          type="text"
+          value={state.value}
+          onChange={(event) => setState({ ...state, value: event.target.value })}
+          placeholder="Código de seguridad"
+        />
+        <button onClick={() => setState({ ...state, loading: true })}>
+          Comprobar
+        </button>
+      </div>
+    );
+  }
+  if (!state.deleted && state.confirmed) {
+    return (
+      <div>
+        <h1>Eliminar {name}</h1>
+        <p>¿Estás seguro de eliminar {name}?</p>
+        <button onClick={() => setState({ ...state, deleted: true })}>Sí</button>
+        <button onClick={() => setState({ ...state, confirmed: false, value: "" })}>
+          No
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <h1>Eliminar {name}</h1>
-      <p>Por favor escribe el código de seguridad</p>
-      {state.error && !state.loading && <p> Error el código es incorrecto.</p>}
-      {state.loading && <p>Cargando...</p>}
-      <input
-        type="text"
-        value={state.value}
-        onChange={(event) => setState({ ...state, value: event.target.value })}
-        placeholder="Código de seguridad"
-      />
-      <button onClick={() => setState({ ...state, loading: true })}>
-        Comprobar
+      <h1>{name} ha sido eliminado</h1>
+      <button
+        onClick={() =>
+          setState({ ...state, deleted: false, confirmed: false, value: "" })
+        }
+      >
+        Volver
       </button>
     </div>
   );
